@@ -1,0 +1,16 @@
+{
+  "name": "bujdit",
+  "version": "0.0.1",
+  "description": "this software does things",
+  "main": "bujdit.js",
+  "dependencies": {
+    "express": "^4.17.1",
+    "pg": "^7.12.1"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "cagelight, nab622",
+  "license": "MIT"
+}
