@@ -1,0 +1,1005 @@
+﻿:root {
+	--apptitle-blur: 0.25em;
+	--apptitle-distp: 0.1em;
+	--apptitle-distn: -0.1em;
+}
+
+body {
+	color: #FFFFFF;
+	background-color: #000;
+	font-family: 'Gochi Hand', monospace;
+	text-align: center;
+	margin: 0px;
+	display: flex;
+	flex-direction: column;
+	
+	position: absolute;
+	left: 0;
+	right: 0;
+	top: 0;
+	bottom: 0;
+	overflow: hidden;
+}
+
+#pageFooter {
+	position: fixed;
+	top: 95vh;
+	font-size: 8pt;
+	margin-left: 20px;
+}
+
+/* This class makes the focus on a text field much more obvious */
+input:focus {
+	box-shadow: 0px 0px 40px #44F, inset 0px 0px 20px #44F;
+}
+
+input {
+	font-family: inherit;
+}
+
+button:hover {
+	background-color: rgba(255,255,128,.8);
+}
+
+button {
+	font-family: 'Permanent Marker', monospace;
+	font-size: 42px;
+	font-weight: bold;
+	border-radius: 30px;
+	border-width: 2px;
+	border-color: #883;
+	width: 100%;
+	margin: 20px auto;
+	padding: 10px;
+	padding-bottom: 45px;
+	padding-top: 45px;
+	color: #000;
+	user-select: none;
+	text-shadow: 1px 1px #BBB, -1px -1px #BBB, -1px 1px #BBB, 1px -1px #BBB;
+	background-image: linear-gradient(0deg, rgba(0,0,0,0.05), rgba(255,255,255,0.1), rgba(0,0,0,0.05));
+	transition: background-color 0.1s;
+}
+
+h1 {
+	font-family: 'Permanent Marker', monospace;
+	margin: 20px;
+}
+
+h2 {
+	font-family: 'Permanent Marker', monospace;
+	margin: 10px;
+}
+
+h3 {
+	margin: 0px;
+}
+
+select {
+	font-size: 36px;
+	font-weight: bold;
+	border-radius: 10px;
+	border-width: 2px;
+	border-color: #883;
+	width: 100%;
+	margin: 10px auto;
+	margin-top: 50px;
+	margin-bottom: 50px;
+	padding: 30px;
+	color: #000;
+	user-select: none;
+	text-align: center;
+	text-shadow: 1px 1px #FFF, -1px -1px #FFF, -1px 1px #FFF, 1px -1px #FFF;
+}
+
+#appbar {
+	flex: 0 0 auto;
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	justify-content: flex-start;
+	height: 72px;
+	background-color: #222;
+	padding: 4px 12px;
+	user-select: none;
+}
+
+#appbarGradient {
+	position: fixed;
+	padding: 4px;
+	top: 0px;
+	left: 0px;
+	width: 100%;
+	height: 72px;
+	background-image: linear-gradient(0deg, #0009, #9991, #0003, #0002, #0000, #FFF2, #6663);
+	pointer-events: none;
+}
+
+.appbayButtonContainer {
+	display: flex;
+	flex: 1 0 auto;
+	flex-diection: row;
+	justify-content: center;
+	align-items: center;
+}
+
+.appbayButton:hover {
+	background-color: #770;
+	border-color: #D99;
+}
+
+.appbayButton {
+	height: 60px;
+    width: 100px;
+	border: 1px solid #777;
+	border-radius: 6px;
+	background-color: #333;
+	background-size: contain;
+	background-repeat: no-repeat;
+	background-position: center;
+	cursor: pointer;
+	font-size: 18pt;
+	font-weight: bold;
+	font-family: monospace;
+	display: grid;
+	justify-content: center;
+	align-items: center;
+	transition: background-color .15s;
+}
+
+.appbayPeopleButton {
+	background-image: linear-gradient(0deg, #0007, #0000, #0000, #0000, #0000, #0000, #FFF7), linear-gradient(90deg, #FFF7, #0000, #0000, #0000, #0000, #0000, #0007), url("/i/.png");
+}
+
+.appbayMessgaesButton {
+	background-image: linear-gradient(0deg, #0007, #0000, #0000, #0000, #0000, #0000, #FFF7), linear-gradient(90deg, #FFF7, #0000, #0000, #0000, #0000, #0000, #0007), url("/i/catBox.png");
+}
+
+.appbayCalednarButton {
+	background-image: linear-gradient(0deg, #0007, #0000, #0000, #0000, #0000, #0000, #FFF7), linear-gradient(90deg, #FFF7, #0000, #0000, #0000, #0000, #0000, #0007), url("/i/calednar.png");
+}
+
+.logoutButton:hover {
+	background-color: #900;
+	border-color: #D99;
+}
+
+.logoutButton {
+	width: 150px;
+	background-color: #600;
+	background-image: linear-gradient(0deg, #0007, #0000, #0000, #0000, #0000, #0000, #FFF7), linear-gradient(90deg, #FFF7, #0000, #0000, #0000, #0000, #0000, #0007);
+	user-select: none;
+}
+
+#appsep {
+	flex: 0 0 auto;
+	background-color: #000;
+	background-image: linear-gradient(90deg, #444F, #4440, #4440, #444F);
+	transition: background-color 0.5s;
+	height: 1px;
+}
+
+@keyframes apptitle_anim1 {
+	0% {
+		text-shadow: 0em 0em var(--apptitle-blur) #08F, var(--apptitle-distn) var(--apptitle-distn) var(--apptitle-blur) #0F8, var(--apptitle-distp) var(--apptitle-distp) var(--apptitle-blur) #80F, 0em 0em var(--apptitle-blur) #F08;
+	}
+	25% {
+		text-shadow: var(--apptitle-distn) var(--apptitle-distn) var(--apptitle-blur) #08F, 0em 0em var(--apptitle-blur) #0F8, 0em 0em var(--apptitle-blur) #80F, var(--apptitle-distp) var(--apptitle-distp) var(--apptitle-blur) #F08;
+	}
+	50% {
+		text-shadow: 0em 0em var(--apptitle-blur) #08F, var(--apptitle-distp) var(--apptitle-distp) var(--apptitle-blur) #0F8, var(--apptitle-distn) var(--apptitle-distn) var(--apptitle-blur) #80F, 0em 0em var(--apptitle-blur) #F08;
+	}
+	75% {
+		text-shadow: var(--apptitle-distp) var(--apptitle-distp) var(--apptitle-blur) #08F, 0em 0em var(--apptitle-blur) #0F8, 0em 0em var(--apptitle-blur) #80F, var(--apptitle-distn) var(--apptitle-distn) var(--apptitle-blur) #F08;
+	}
+	100% {
+		text-shadow: 0em 0em var(--apptitle-blur) #08F, var(--apptitle-distn) var(--apptitle-distn) var(--apptitle-blur) #0F8, var(--apptitle-distp) var(--apptitle-distp) var(--apptitle-blur) #80F, 0em 0em var(--apptitle-blur) #F08;
+	}
+}
+
+@keyframes apptitle_anim2 {
+	0% {
+		transform: rotate(-8deg);
+	}
+	100% {
+		transform: rotate(2deg);
+	}
+}
+
+#apptitle {
+	font-family: 'Gochi Hand', cursive;
+	font-weight: bold;
+	font-size: 38px;
+	user-select: none;
+	color: #FFF;
+	/*text-shadow: 4px 4px 4px #F80, -4px -4px 4px #08F;*/
+	animation: apptitle_anim1 1s infinite ease-in-out normal, apptitle_anim2 4s infinite ease-in-out alternate;
+	cursor: pointer;
+}
+
+#appbay {
+	flex: 1 1 auto;
+	display: flex;
+	flex-direction: row;
+	justify-content: flex-end;
+	align-items: center;
+}
+
+#approot {
+	flex: 1 1 auto;
+	display: flex;
+	flex-direction: column;
+	overflow: auto;
+	align-items: stretch	;
+	background-image: url("/i/bgdoge85.png"), linear-gradient(120deg, rgba(0,0,0,0), rgba(0,0,0,0.6));
+	background-size: 128pt, 100%;
+	background-color: #333;
+	transition: background-color 1.0s;
+}
+
+#rootDiv {
+	display: flex;
+	flex: 1 1 auto;
+	align-items: center;
+	flex-direction: column;
+}
+
+.infoText {
+	color: #059;
+}
+
+.modalInput {
+	font-size: 28pt;
+	padding: 30px;
+	margin-top: 30px;
+	margin-bottom: 30px;
+}
+
+.modalButton:hover {
+	background-color: #BB0;
+	border-color: #D99;
+}
+
+.modalButton {
+	user-select: none;
+	border-radius: 10px;
+	background-color: #600;
+	background-image: linear-gradient(0deg, #0007, #0000, #0000, #0000, #0000, #0000, #FFF7), linear-gradient(90deg, #FFF7, #0000, #0000, #0000, #0000, #0000, #0007);
+	border: 1px solid #999;
+	margin: 10px;
+	padding: 20px;
+	font-size: 48pt;
+}
+
+#userColor {
+	padding: 0px;
+	border: 2px solid #000;
+	height: 60px;
+	background-color: #000;
+	flex: 1 1 auto;
+}
+
+.colorPickerLine {
+	display: inline-flex;
+	flex-direction: row;
+	align-items: center
+}
+
+.createButton:hover {
+	background-color: #900;
+	border-color: #D99;
+}
+
+.createButton {
+	background-color: #600;
+}
+
+.cancelButton:hover {
+	background-color: #AAA;
+	border-color: #D99;
+}
+
+.cancelButton {
+	background-color: #555;
+}
+
+#mainButtonDiv {
+	flex: 0 0 auto;
+	display: flex;
+	flex-direction: row;
+	flex-wrap: wrap;
+	justify-content: center;
+	align-content: flex-start;
+}
+
+.newItemButton:hover {
+	border: 1px solid #FF0;
+	color: #FF0;
+	box-shadow: 5px 5px rgba(0, 0, 0, .2);
+	transform: translate(3px, 3px);
+}
+
+.newItemButton {
+	width: 200px;
+	height: 200px;
+	display: grid;
+	justify-content: center;
+	align-items: center;
+	font-size: 72pt;
+	border-radius: 100px;
+	background-size: contain;
+	background-repeat: no-repeat;
+	background-position: center;
+	margin-bottom: 16px;
+	cursor: pointer;
+	text-shadow: 2px 2px #000, -2px -2px #000, -2px 2px #000, 2px -2px #000, 2px 0px #000, -2px 0px #000, 0px -2px #000, 0px 2px #000;
+	box-shadow: 10px 10px rgba(0, 0, 0, .2);
+	transform: translate(0px, 0px);
+	transition: color 0.25s, box-shadow 0.25s, transform 0.25s;
+	user-select: none;
+}
+
+.menuButton:hover {
+	border: 1px solid #FF0;
+	color: #FF0;
+	box-shadow: 5px 5px rgba(0, 0, 0, .2);
+	transform: translate(3px, 3px);
+}
+
+.menuButton {
+	height: 250px;
+	width: 300px;
+	font-size: 36pt;
+	font-weight: bold;
+	margin: 40px;
+	padding: 10px;
+	padding-bottom: 5px;
+	border: 1px solid rgba(100, 255, 255, .3);
+	border-radius: 20px;
+	background-image: linear-gradient(0deg, #0009, #0000, #0000, #0000, #0000, #0000, #0009), linear-gradient(90deg, #0009, #0000, #0000, #0000, #0000, #0000, #0009);
+	background-size: contain;
+	background-repeat: no-repeat;
+	background-position: center;
+	overflow: hidden;
+	text-shadow: 2px 2px #000, -2px -2px #000, -2px 2px #000, 2px -2px #000, 2px 0px #000, -2px 0px #000, 0px -2px #000, 0px 2px #000;
+	cursor: pointer;
+	flex: 0 0 auto;
+	user-select: none;
+	box-shadow: 10px 10px rgba(0, 0, 0, .2);
+	transform: translate(0px, 0px);
+	transition: color 0.25s, box-shadow 0.25s, transform 0.25s;
+	display: flex;
+	align-items: flex-end;
+	justify-content: center;
+}
+
+.ellipsis {
+	padding: 10px;
+	min-width: 0;
+	text-overflow: ellipsis;
+	overflow: hidden;
+}
+
+.star:hover {
+	color: #F80;
+}
+
+.star {
+	top: 0px;
+	right: 15px;
+	position: fixed;
+	color: #FFF;
+	user-select: none;
+}
+
+.highlighted:hover {
+	color: #F80;
+}
+
+.highlighted {
+	color: #FF0;
+}
+
+.bujditsButton {
+	background-image: linear-gradient(0deg, #0007, #0000, #0000, #0000, #0000, #0000, #FFF7), linear-gradient(90deg, #FFF7, #0000, #0000, #0000, #0000, #0000, #0007), url("/i/doler.png");
+}
+
+.reportsButton {
+	background-image: linear-gradient(0deg, #0007, #0000, #0000, #0000, #0000, #0000, #FFF7), linear-gradient(90deg, #FFF7, #0000, #0000, #0000, #0000, #0000, #0007), url("/i/cent.png");
+}
+
+.shnoppingListButton {
+	background-image: linear-gradient(0deg, #0007, #0000, #0000, #0000, #0000, #0000, #FFF7), linear-gradient(90deg, #FFF7, #0000, #0000, #0000, #0000, #0000, #0007), url("/i/shnoppingCart.png");
+}
+
+.calednarsButton {
+	background-image: linear-gradient(0deg, #0007, #0000, #0000, #0000, #0000, #0000, #FFF7), linear-gradient(90deg, #FFF7, #0000, #0000, #0000, #0000, #0000, #0007), url("/i/calednar.png");
+}
+
+.payrolButton {
+	background-image: linear-gradient(0deg, #0007, #0000, #0000, #0000, #0000, #0000, #FFF7), linear-gradient(90deg, #FFF7, #0000, #0000, #0000, #0000, #0000, #0007), url("/i/bank.png");
+}
+
+.frendsButton {
+	background-image: linear-gradient(0deg, #0007, #0000, #0000, #0000, #0000, #0000, #FFF7), linear-gradient(90deg, #FFF7, #0000, #0000, #0000, #0000, #0000, #0007), url("/i/shnoppingCart.png");
+}
+
+.messgaesButton {
+	background-image: linear-gradient(0deg, #0007, #0000, #0000, #0000, #0000, #0000, #FFF7), linear-gradient(90deg, #FFF7, #0000, #0000, #0000, #0000, #0000, #0007), url("/i/catBox.png");
+}
+
+.setingsButton {
+	background-image: linear-gradient(0deg, #0007, #0000, #0000, #0000, #0000, #0000, #FFF7), linear-gradient(90deg, #FFF7, #0000, #0000, #0000, #0000, #0000, #0007), url("/i/gear.png");
+}
+
+.bujditColor {
+	background-color: #7E7;
+}
+
+.acountColor {
+	background-color: #CB0;
+}
+
+.shnoppingListColor {
+	background-color: #7AE;
+}
+
+.calednarColor {
+	background-color: #EA7;
+}
+
+.payrolColor {
+	background-color: #E70;
+}
+
+.frendsColor {
+	background-color: #E7E;
+}
+
+.messgaesColor {
+	background-color: #AAA;
+}
+
+.setingsColor {
+	background-color: #444;
+}
+
+
+/* This div contains a text box for custom text. It is usually hidden. */
+.customTextDiv {
+	height: 20vh;
+}
+
+.customInput {
+	margin-top: 30px;
+	margin-bottom: 30px;
+}
+
+.hidden {
+	display: none;
+}
+
+.crumbTrail {
+	font-size: 16pt;
+	font-weight: bold;
+	width: 100%;
+	text-align: left;
+}
+
+.version {
+	font-size: 16pt;
+	text-align: right;
+	width: 100%;
+}
+.smallButton {
+	font-size: 28pt;
+	width: 45%;
+}
+
+.bigButton {
+	font-size: 48pt;
+	height: 15vh;
+}
+
+.textShadow {
+	text-shadow: 1px 1px #000, -1px -1px #000, -1px 1px #000, 1px -1px #000;
+}
+
+.invisible {
+	opacity: 0;
+}
+
+.backButton::before {
+	
+content: "⇦ Back ⇦";
+
+}
+
+.backButton {
+	background-color: rgba(180,180,180,0.8);
+}
+
+.continueButton::before {
+	
+content: "Continue";
+
+}
+
+.continueButton {
+	background-color: rgba(0,255,0,.7);
+}
+
+.commitButton::before {
+	
+content: "Commit!";
+
+}
+
+.commitButton {
+	background-color: rgba(255,255,0,1);
+}
+
+.buttonContainer {
+	height: 100%;
+	width: 100%;
+}
+
+.income {
+	background-color: rgba(0,255,0,.7);
+}
+
+.incomeText {
+	color: #6F6;
+}
+
+.expense {
+	background-color: rgba(255,0,0,.7);
+}
+
+.expenseText {
+	color: #F66;
+}
+
+.question {
+	font-size: 36pt;
+	user-select: none;
+	text-shadow: 1px 1px #000, -1px -1px #000, -1px 1px #000, 1px -1px #000;
+	margin-left: 40px;
+	margin-right: 40px;
+}
+
+.verifyEdit {
+	font-size: 32pt;
+	color: #FB3;
+	text-shadow: 1px 1px #000, -1px -1px #000, -1px 1px #000, 1px -1px #000;
+	margin: 40px;
+	margin-bottom: 27vh;
+}
+
+.blueText {
+	color: #68F
+}
+
+.menuHeading {
+	font-size: 42pt;
+	user-select: none;
+	text-shadow: 1px 1px #000, -1px -1px #000, -1px 1px #000, 1px -1px #000;
+	white-space: nowrap;
+}
+
+.loginForm {
+	flex: 1 1 auto;
+	display: flex;
+	flex-direction: column;
+}
+
+.loginBox {
+	flex: 0 0 auto;
+	flex-direction: column;
+	display: flex;
+	justify-content: center;
+}
+
+.loginGrid {
+	display: grid;
+	grid-template: "a b" auto "c d" auto;
+	text-align: right;
+	align-items: center;
+}
+
+.loginInput {
+	font-size: 36pt;
+	margin: 10px;
+	margin-top: 50px;
+	margin-bottom: 50px;
+	padding: 30px;
+}
+
+.inputLabel {
+	font-family: 'Permanent Marker', monospace;
+	font-size: 36pt;
+	margin: 10px;
+	padding: 10px;
+}
+
+.loginButton {
+	background-color: #46C;
+}
+
+.message {
+	font-size: 20pt;
+	color: #C00;
+	text-shadow: 1px 1px #000, -1px -1px #000, -1px 1px #000, 1px -1px #000;
+}
+
+.messageWrapper {
+	height: 20%;
+}
+
+.flashRedBackground {
+	animation-name: flashRedKeyframes;
+	animation-duration: 1.2s;
+	animation-direction: forward;
+	animation-timing-function: ease-in-out;
+}
+
+@keyframes flashRedKeyframes {
+	0%		{box-shadow: 0px 0px 40px #44F, inset 0px 0px 20px #44F;}
+	15%		{box-shadow: 0px 0px 40px #F44, inset 0px 0px 80px #F44;}
+	50%		{box-shadow: 0px 0px 40px #F00, inset 0px 0px 80px #F00;}
+	85%		{box-shadow: 0px 0px 40px #F44, inset 0px 0px 80px #F44;}
+	100%	{box-shadow: 0px 0px 40px #44F, inset 0px 0px 20px #44F;}
+}
+
+#errorDiv:hover {
+	opacity: 0.85;
+}
+
+#errorDiv {
+	user-select: none;
+	display: flex;
+	flex-direction: row;
+	justify-content: center;
+	align-items: center;
+	left: 0;
+	right: 0;
+	position: fixed;
+	width: 70vw;
+	padding: 20px;
+	border: 1px solid #059;
+	border-top: none;
+	margin: 0 auto;
+	background-image: linear-gradient(-20deg, rgba(30, 30, 30, .95), rgba(10, 10, 10, .95), rgba(30, 30, 30, .95));
+	border-bottom-left-radius: 30px;
+	border-bottom-right-radius: 30px;
+	box-shadow: 0px 0px 20px #000;
+	color: #F00;
+	font-size: 20pt;
+	font-weight: bold;
+	font-family: monospace;
+	transform: translateY(-150%);
+	transition: transform 0.75s, opacity 0.25s;
+	cursor: pointer;
+	opacity: 1.0;
+}
+
+.speechBubble:after {
+    content: "";
+    position: absolute;
+    border-style: solid;
+    display: block;
+    width: 0;
+	top: 16px;
+	left: -50px;
+	bottom: auto;
+	border-width: 10px 50px 10px 0;
+	border-color: transparent #CCC;
+}
+
+.speechBubble {
+	position: relative;
+	padding: 10px;
+	border-radius: 10px;
+	background-color: #CCC;
+	border: 1px solid #000;
+}
+
+.errorMonkey {
+	height: 60px;
+	width: 70px;
+	margin-right: 64px;
+	background-image: url("/i/moneyMonkey.gif");
+	background-size: contain;
+	background-repeat: no-repeat;
+	background-position: center;
+	border: 0;
+}
+
+.angryMonkey:before {
+	content: "Angry"
+}
+
+.furiousMonkey:before {
+	content: "Furious"
+}
+
+.angryMonkey {
+	background-image: url("/i/moneyMonkey.gif");
+}
+
+.furiousMonkey {
+	background-image: url("/i/moneyMonkey.gif");
+	animation-name: quiver;
+	animation-duration: 0.125s;
+	animation-direction: forward;
+	animation-iteration-count: infinite;
+}
+
+@keyframes quiver {
+	0% { transform: translateY(-2px); }
+	15% { transform: translateY(0px); }
+	30% { transform: translateX(-2px); }
+	45% { transform: translateX(2px); }
+	60% { transform: translateY(2px); }
+	75% { transform: translateY(-1px); }
+	90% { transform: translateY(0px); }
+}
+    
+.topSpacer {
+	height: 25px;
+}
+
+.nothingFound {
+	font-size: 36pt;
+	color: #C00;
+}
+
+.nothingFoundMonkey {
+	flex: 0 0 auto;
+	width: 450px;
+	height: 350px;
+	background-image: url('/i/moneyMonkey.gif');
+	margin: 20px;
+}
+
+.calednarGrid {
+	display: grid;
+	flex: 1 1 auto;
+	grid-template-columns: repeat(7, 1fr);
+	grid-template-rows: 40px repeat(6, 1fr);
+}
+
+.calednarDateHeadings {
+	flex: 0 0 auto;
+	flex-direction: row;
+	display: flex;
+	justify-content: center;
+	margin: 0px;
+	padding: 0px;
+}
+
+.calednarYear {
+	width: 350px;
+	font-size: 48pt;
+	color: #FFF;
+	text-shadow: 2px 2px #000, -2px -2px #000, -2px 2px #000, 2px -2px #000, 2px 0px #000, -2px 0px #000, 0px -2px #000, 0px 2px #000;
+}
+
+.calednarMonth {
+	width: 350px;
+	font-size: 36pt;
+	color: #FFF;
+	text-shadow: 2px 2px #000, -2px -2px #000, -2px 2px #000, 2px -2px #000, 2px 0px #000, -2px 0px #000, 0px -2px #000, 0px 2px #000;
+}
+
+.calednarArrows:hover {
+	color: #FF0;
+}
+
+.calednarArrows {
+	font-size: 48pt;
+	color: #FFF;
+	text-shadow: 2px 2px #000, -2px -2px #000, -2px 2px #000, 2px -2px #000, 2px 0px #000, -2px 0px #000, 0px -2px #000, 0px 2px #000;
+	margin-left: 40px;
+	margin-right: 40px;
+	user-select: none;
+}
+
+.calednarDay {
+	min-height: 80px;
+	min-width: 80px;
+	text-align: left;
+	padding: 0px;
+	border: 2px solid #200;
+	color: #000;
+	background-color: #d3bb8a;
+	cursor: pointer;
+}
+
+.calednarOtherMonth {
+	width: 100%;
+	min-height: 100%;
+	background-color: #000;
+	opacity: 0.5;
+}
+
+.calednarWeekdayLabel {
+	border: 0px;
+	background-color: #000;
+	color: #fff;
+	font-size: 18pt;
+	font-weight: bold;
+	user-select: none;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	overflow: hidden;
+}
+
+.calednarDayNumbers:hover {
+	color: #990;
+}
+
+.calednarDayNumbers {
+	font-size: 22pt;
+	font-weight: bold;
+	color: #000;
+	text-shadow: 2px 2px #000, -2px -2px #000, -2px 2px #000, 2px -2px #000, 2px 0px #000, -2px 0px #000, 0px -2px #000, 0px 2px #000;
+	text-shadow: 2px 2px #FFF, -2px -2px #FFF, -2px 2px #FFF, 2px -2px #FFF, 2px 0px #FFF, -2px 0px #FFF, 0px -2px #FFF, 0px 2px #FFF;
+	margin: 4px;
+}
+
+.calednarCurrentDay {
+	background-color: #8BF;
+}
+
+.calednarCellText {
+	text-overflow: ellipsis;
+	overflow: hidden;
+	padding: 4px;
+}
+
+#modalroot {
+	height: 100%;
+	width: 100%;
+	overflow: auto;
+	background-color: #000B;
+	position: fixed;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: flex-start;
+	cursor: pointer;
+	margin-top: 81px;
+}
+
+#modal {
+	display: flex;
+	flex: 0 0 auto;
+	flex-direction:column;
+	align-items: center;
+	justify-content: center;
+	margin-top: 20px;
+}
+
+.modalForm {
+	display: flex;
+	flex-direction: column;
+	cursor: unset;
+	height: 700px;
+	width: 550px;
+	font-size: 28pt;
+	border-radius: 20px;
+	padding: 10px;
+	background-color: #CCC;
+	border: 7px solid #777;
+	animation-name: modalFadeIn;
+	animation-duration: 0.7s;
+	animation-direction: forward;
+	text-shadow: 1px 1px #000, -1px -1px #000, -1px 1px #000, 1px -1px #000;
+}
+
+@keyframes modalFadeIn {
+	0% { opacity: 0; }
+	30% { opacity: 0; }
+	100% { opacity: 1; }
+}
+
+.modalHighlight {
+	color: #F00;
+}
+
+.yesButton {
+	background-color: #090;
+}
+
+.noButton {
+	background-color: #900;
+}
+
+.bujditModal {
+	background-color: #6D6E;
+	border: 7px solid #4A4;
+}
+
+.acountModal {
+	background-color: #CB0E;
+	border: 7px solid #A90;
+}
+
+.payrolModal {
+	background-color: #E70E;
+	border: 7px solid #C50;
+}
+
+.calednarModal {
+	background-color: #EA7E;
+	border: 7px solid #C85;
+}
+
+.frendModal {
+	background-color: #E7EE;
+	border: 7px solid #C5C;
+}
+
+.messgaeModal {
+	background-color: #AAAE;
+	border: 7px solid #AAA;
+}
+
+.newShnoppingListModal {
+	background-color: #69DE;
+	border: 7px solid #47B;
+}
+
+.menuButtonWrapper {
+	display: inline-block;
+	width: 90%;
+}
+
+.addTransactions {
+	background-color: rgba(40,235,40,0.8);
+}
+
+.editAllotments {
+	background-color: rgba(90,235,90,0.8);
+}
+
+.viewMonthlySummary {
+	background-color: rgba(160,100,160,0.8);
+}
+
+.viewYearlySummary {
+	background-color: rgba(160,70,160,0.8);
+}
+
+.editTransactions {
+	background-color: rgba(255,255,100,0.8);
+}
+
+.editCategories {
+	background-color: rgba(255,255,100,0.8);
+}
+
+.editDescriptions {
+	background-color: rgba(255,255,100,0.8);
+}
+
+.editAccounts {
+	background-color: rgba(255,100,100,0.8);
+}
+
+.editPeople {
+	background-color: rgba(255,90,90,0.8);
+}
+
+.downloadDatabaseFile {
+	background-color: rgba(255,128,50,0.8);
+}
+
+.incomeBackground {
+	background-color: rgba(10,90,0,1);
+}
+.expenseBackground {
+	background-color: rgba(110,0,0,1);
+}
+
