@@ -8,12 +8,9 @@ title			=	'Bujdit - Better than a budget'
 
 //Number of milliseconds for an error message to stay on-screen. Messages will also go away if clicked/tapped
 errorTimeout		=	5000
-monkeyAngerTimeout	=	180000		//3 minutes
-monkeyAngerTimeout	=	30000		//30 seconds
-monkeyAngerLevel	=	0			//Start the monkey with no anger
+monkeyAngerTimeout	=	45000		//45 seconds
 angryLevel			=	5
 furiousLevel		=	8
-moneyMonkeyFurious	=	false
 weekdays = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
 months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']
 bg_hue = 0
@@ -25,21 +22,26 @@ let indicators = null
 
 //This object contains a list of all the errors from the API by number
 let error_codes = {
-// GENERIC
-0: 'Success!',
-1: 'Unknown',
-2: 'Unrecognized command!',
-3: 'Invalid session token!',
-4: 'Authorization required!',
+	// GENERIC
+	0: 'Success!',
+	1: 'Unknown',
+	2: 'Unrecognized command!',
+	3: 'Invalid session token!',
+	4: 'Authorization required!',
 
-// ACCOUNT
-100: 'Username and password required!',
-101: 'Invalid username!',
-102: 'Invalid password!',
+	// ACCOUNT
+	100: 'Username and password required!',
+	101: 'Invalid username/Password!',
 
-// BUJDIT
-200: 'Bujdit not found!',
-201: 'Name required!'
+	// BUJDIT
+	200: 'required field missing!',
+	201: 'Bujdit not found or insufficient access!',
+	202: 'Name required!',
+    
+	// SHNOPPING
+	300: 'Required field missing!',
+	301: 'Shnopping not found or insufficient access!',
+	302: 'Name required!',
 }
 
 
@@ -57,6 +59,25 @@ class Bujdit {
 	change_form(new_form) {		window.location = '/' + new_form + '?data=' + btoa(JSON.stringify(this.data))
 	}
 	
+}
+
+function localSet(key, value)
+{
+	return localStorage.setItem(key, JSON.stringify(value))
+}
+
+function localGet(key)
+{
+	let temp = null
+	try
+	{
+		temp = JSON.parse(localStorage.getItem(key))
+	}
+	catch(err)
+	{
+		localStorage.setItem(key, null)
+	}
+	return temp
 }
 
 function parseCurrency(inputObject) {
@@ -122,7 +143,7 @@ function sendCommands(cmds, callbacks)
 {
 	let send_data = {cmds:cmds}
 	
-	let token = localStorage.getItem('session')
+	let token = localGet('session')
 	if (token) send_data.session = token
 	
 	let xhr = new XMLHttpRequest()
@@ -135,7 +156,7 @@ function sendCommands(cmds, callbacks)
 			unlockPage()
 			if(xhr.status === 200)
 			{
-				indicators.pulse(2, 500)
+				indicators.pulse(2, 1000)
 				let data = JSON.parse(xhr.responseText);
 				if(data.success)
 				{
@@ -184,11 +205,26 @@ function sendCommand(cmd, callback) {
 	sendCommands([cmd], [callback])
 }
 
+function changeHash(inputValue)
+{
+	window.location.hash = inputValue
+}
+
+function addItemIDToHash(inputID, inputName)
+{
+	let temp = window.location.hash
+	while(temp[temp.length - 1] == "/")
+	{
+		temp = temp.substr(0, temp.length - 1)
+	}
+	window.location.hash = temp + '/' + inputID
+}
+
 function logoutButton()
 {
 	localStorage.removeItem('session')
-	sendCommand( {cmd: "user_logout"}, renderLoginPage)
-window.location.hash = ''
+	sendCommand( {cmd: "user_logout"}, doNothing)
+	window.location.hash = ''
 }
 
 function loginButton()
@@ -218,21 +254,12 @@ function processLoginResponse(inputData)
 {
 	if(inputData && inputData.success)
 	{
-		localStorage.setItem('session', inputData.token)
+		localSet('session', inputData.token)
 		selectPageToRender()
 	}
 	else
 	{
 		displayError(inputData.code)
-
-		if(inputData.code == 11)
-		{
-			flashRed(bujditUsername)
-		}
-		if(inputData.code == 12)
-		{
-			flashRed(bujditPassword)
-		}
 	}
 }
 
@@ -241,9 +268,28 @@ function selectPageToRender()
 	closeModal()
 	clearPage()
 	renderAppbay()
+
+	setingsButton.onclick = ()=>{ console.log('FIXME') }
 	let temp = window.location.hash
-	temp = temp.split('/')[0]
-	switch(temp)
+	temp = temp.split('/')
+
+	if(!localGet('session'))
+{
+		if(temp == '' || temp == '#')
+		{
+			//Not logged in, and nowhere to be. Splash page.
+			renderSplashPage()
+			return
+		}
+		else
+		{
+			//Not logged in, but we're supposed to be somewhere. Force login page.
+			renderLoginPage()
+			return
+		}
+	}
+
+	switch(temp[0])
 	{
 		case '#calednarMenu':
 			renderCalednarPage()
@@ -254,26 +300,73 @@ function selectPageToRender()
 		case '#frendsMenu':
 			renderFrendsPage()
 			break
-		case '#messgaesMenu':
+		case '#messgaes':
 			renderMessgaesPage()
 			break
 		case '#setingsMenu':
 			renderSetingsPage()
 			break
 		case '#bujditsMenu':
-			renderBujditsPage()
+			if(temp[1]) 
+			{
+				//We're supposed to be inside a list.
+				getBujditDetails(temp[1])
+			}
+			else
+			{
+				renderBujditsPage()
+			}
 			break
-		case '#reportsMenu':
-			renderReportsPage()
+		case '#reprotsMenu':
+			renderReprotsPage()
 			break
 		case '#shnoppingListMenu':
-			renderShnoppingListPage()
+			if(temp[1]) 
+			{
+				//We're supposed to be inside a list.
+				getShnoppingListItems(temp[1])
+			}
+			else
+			{
+				renderShnoppingListPage()
+			}
 			break
 		case '#mainMenu':
+			renderMainMenu()
+			break
+		case '#login':
 		case '#':
 		case '':
 		default:
-			renderMainMenu()
+			//We don't have a place to be. Force the main menu.
+			window.location.hash = 'mainMenu'
+	}
+}
+
+function doNothing()
+{
+	//This is used to allow a callback to do nothing, without causing any errors
+	return
+}
+
+function backButtonClick()
+{
+	let temp = window.location.hash.split('/')
+	if(temp.length == 0 || temp[0] == '' || temp[0] == '#')
+	{
+		return
+	}
+	temp.pop()
+	temp = temp.join('/')
+	if(temp == '#' || temp == '') temp = 'mainMenu'
+	window.location.hash = temp
+}
+
+function setFocus(focusID)
+{
+	if(focusID != '' && document.getElementById(focusID))
+	{
+		document.getElementById(focusID).focus()
 	}
 }
 
@@ -335,25 +428,17 @@ function clear_element(e) {
 
 function changeStarredStatus(itemName, itemID, newStatus)
 {
-	let command = itemName + '_user_meta_set'
+	let command = ''
 	switch(itemName)
 	{
 		case 'bujdits':
 			command = 'bujdit_user_meta_set'
 			break
-	}
-	sendCommand( { cmd: command, id: itemID, field: 'starred', meta: newStatus }, processStarStatusChange)
-}
-
-function chooseClickedItemToEnter(inputItem, itemID)
-{
-	switch(itemName)
-	{
-		case 'bujdits':
-			sendCommand( { cmd: command, id: itemID }, selectPageToRender)
+		case 'shnoppings':
+			command = 'shnopping_user_meta_set'
 			break
 	}
-	displayError('Not implemented yet!')
+	sendCommand( { cmd: command, id: itemID, field: 'starred', meta: newStatus }, processStarStatusChange)
 }
 
 function processStarStatusChange(data)
@@ -368,10 +453,10 @@ function processStarStatusChange(data)
 	}
 }
 
-function parseDataResponseList(data, itemName, classNameForElements, nothingFoundMessage)
+function parseDataResponseList(data, clickFunction, itemName, classNameForElements, nothingFoundMessage)
 {
 	let buttonDiv = createElement( {elementType: 'div', id: 'mainButtonDiv' })
-	if(data !== 1 && data && data[itemName].length > 0)		//REMOVE THE DATA !== 1 COMPARISON WHEN THE REST OF THE MENU OPTIONS HAVE BEEN ADDED
+	if(data !== 1 && data && data[itemName] && data[itemName].length > 0)		//REMOVE THE DATA !== 1 COMPARISON WHEN THE REST OF THE MENU OPTIONS HAVE BEEN ADDED
 	{
 		data = sortData(data, itemName)
 		for(let i = 0; i < data[itemName].length; i++)
@@ -382,14 +467,14 @@ function parseDataResponseList(data, itemName, classNameForElements, nothingFoun
 
 			if(data[itemName][i].user_meta && data[itemName][i].user_meta.starred == true)
 			{
-				buttonDiv.appendChild(createElement({ elementType: 'div', style: {backgroundColor: data[itemName][i].meta.userColor}, className: 'menuButton ' + classNameForElements, onclick: ()=>{renderDeleteBujditModal(data[itemName][i].id, data[itemName][i].name)}, bujdit_id: data[itemName][i].id, children: [
+				buttonDiv.appendChild(createElement({ elementType: 'div', style: {backgroundColor: data[itemName][i].meta.userColor}, className: 'menuButton ' + classNameForElements, onclick: ()=>{ clickFunction(data[itemName][i].id, data[itemName][i].name) }, bujdit_id: data[itemName][i].id, children: [
 					{ elementType: 'div', className: 'star highlighted', text: '★', onclick: (evt)=>{ evt.stopPropagation(); changeStarredStatus(itemName, data[itemName][i].id, false)} },
 					{ elementType: 'span', className: 'ellipsis', text: data[itemName][i].name }
 				]}))
 			}
 			else
 			{
-				buttonDiv.appendChild(createElement({ elementType: 'div', style: {backgroundColor: data[itemName][i].meta.userColor}, className: 'menuButton ' + classNameForElements, onclick: ()=>{renderDeleteBujditModal(data[itemName][i].id, data[itemName][i].name)}, bujdit_id: data[itemName][i].id, children: [
+				buttonDiv.appendChild(createElement({ elementType: 'div', style: {backgroundColor: data[itemName][i].meta.userColor}, className: 'menuButton ' + classNameForElements, onclick: ()=>{ clickFunction(data[itemName][i].id, data[itemName][i].name) }, bujdit_id: data[itemName][i].id, children: [
 					{ elementType: 'div', className: 'star', text: '☆', onclick: (evt)=>{ evt.stopPropagation(); changeStarredStatus(itemName, data[itemName][i].id, true)} },
 					{ elementType: 'span', className: 'ellipsis', text: data[itemName][i].name }
 				]}))
@@ -420,6 +505,130 @@ function sortData(data, itemName)
 		if (!aStarred && bStarred) return 1
 		if (aname < bname) return -1
 		if (aname > bname) return 1
+		return 0
+	})
+	return data
+}
+
+function sortShnoppingListByStore()
+{
+	toggleShnoppingListSort('store')
+	data.items = sortShnoppingList(data.items, 'quantity', 1)
+	data.items = sortShnoppingList(data.items, 'price', 1)
+	data.items = sortShnoppingList(data.items, 'name', 1)
+	data.items = sortShnoppingList(data.items, 'store', sortShnoppingListDirection[1])
+	data.items = sortShnoppingList(data.items, 'status', 1)
+
+	renderShnoppingList()
+}
+
+function sortShnoppingListByName()
+{
+	toggleShnoppingListSort('name')
+
+	data.items = sortShnoppingList(data.items, 'quantity', 1)
+	data.items = sortShnoppingList(data.items, 'price', 1)
+	data.items = sortShnoppingList(data.items, 'store', 1)
+	data.items = sortShnoppingList(data.items, 'name', sortShnoppingListDirection[1])
+	data.items = sortShnoppingList(data.items, 'status', 1)
+
+	renderShnoppingList()
+}
+
+function sortShnoppingListByQuantity()
+{
+	toggleShnoppingListSort('quantity')
+
+	data.items = sortShnoppingList(data.items, 'price', 1)
+	data.items = sortShnoppingList(data.items, 'name', 1)
+	data.items = sortShnoppingList(data.items, 'store', 1)
+	data.items = sortShnoppingList(data.items, 'quantity', sortShnoppingListDirection[1])
+	data.items = sortShnoppingList(data.items, 'status', 1)
+
+	renderShnoppingList()
+
+}
+
+function sortShnoppingListByPrice()
+{
+	toggleShnoppingListSort('price')
+
+	data.items = sortShnoppingList(data.items, 'quantity', 1)
+	data.items = sortShnoppingList(data.items, 'price', sortShnoppingListDirection[1])
+	data.items = sortShnoppingList(data.items, 'name', 1)
+	data.items = sortShnoppingList(data.items, 'store', 1)
+	data.items = sortShnoppingList(data.items, 'status', 1)
+
+	renderShnoppingList()
+}
+
+function toggleShnoppingListSort(itemName)
+{
+	itemName = itemName.toLowerCase()
+console.log(itemName + ' Sort')
+	if(sortShnoppingListDirection[0] == itemName)
+	{
+		if(sortShnoppingListDirection[1] == 1)
+		{
+			sortShnoppingListDirection[1] = -1
+		}
+		else
+		{
+			sortShnoppingListDirection[1] = 1
+		}
+	}
+	else
+	{
+		sortShnoppingListDirection[0] = itemName
+		sortShnoppingListDirection[1] = 1
+	}
+}
+
+function sortShnoppingList(data, parameter, direction)
+{
+	//Direction 1 means sort ascending, direction -1 means descending
+	data.sort((a, b)=>{
+		if(a[parameter] == undefined || b[parameter] == undefined) return 0
+		let aCheck = null
+		let bCheck = null
+		if(isNaN(a[parameter]))
+		{
+			aCheck = a[parameter].toLowerCase()
+		}
+		else
+		{
+			aCheck = parseFloat(a[parameter])
+		}
+		if(isNaN(b[parameter]))
+		{
+			bCheck = b[parameter].toLowerCase()
+		}
+		else
+		{
+			bCheck = parseFloat(b[parameter])
+		}
+		if(aCheck > bCheck)
+		{
+			if(direction == 1)
+			{
+				return 1
+			}
+			else
+			{
+				return -1
+			}
+		}
+		if(aCheck < bCheck)
+		{
+			if(direction == 1)
+			{
+				return -1
+			}
+			else
+			{
+				return 1
+			}
+		}
 		return 0
 	})
 	return data
@@ -498,23 +707,27 @@ document.addEventListener("DOMContentLoaded", function(event)
 	
 	indicators = new IndicatorInterface()
 
-	//We need to check if the session is valid before continuing.
-	if (localStorage.getItem('session'))
+	if(localGet('monkeyAngerLevel'))
 	{
-		sendCommands([], [checkTokenValid])
+		//Light up the furious light if need be, and trigger the monkey's anger reduction time
+		decreaseMonkeyAnger()
 	}
 	else
 	{
-		renderLoginPage()
+		//Must not have any of these goodies in local storage. Declare them.
+		localSet('monkeyAngerLevel', 0)			//Start the monkey with no anger
+		localSet('moneyMonkeyFurious', false)	//Monkey is not furious with the user
 	}
-	
+
+	//Check to see if the session is valid and render the appropriate page
+	sendCommands([], [checkTokenValid])
 })
 
 function heartbeat()
 {
-	if (localStorage.getItem('session'))
+	if (localGet('session'))
 	{
-		sendCommand({}, console.log)
+		sendCommand({}, doNothing)
 	}
 }
 
@@ -533,10 +746,12 @@ function checkTokenValid(data)
 function increaseMonkeyAnger()
 {
 	clearTimeout(errorDiv.monkeyAngerTimer)
-	monkeyAngerLevel++
-	if(monkeyAngerLevel > 11) monkeyAngerLevel = 11
-	errorDiv.monkeyAngerTimer = setTimeout(decreaseMonkeyAnger, monkeyAngerTimeout)	if(monkeyAngerLevel > furiousLevel) {
-		moneyMonkeyFurious = true
+	localSet('monkeyAngerLevel', localGet('monkeyAngerLevel') + 1)
+	if(localGet('monkeyAngerLevel') > 11) localSet('monkeyAngerLevel', 11)
+	errorDiv.monkeyAngerTimer = setTimeout(decreaseMonkeyAnger, monkeyAngerTimeout)
+	if(localGet('monkeyAngerLevel') > furiousLevel)
+	{
+		localSet('moneyMonkeyFurious', true)
 		indicators.flash(4, 200)
 	}
 }
@@ -544,42 +759,54 @@ function increaseMonkeyAnger()
 function decreaseMonkeyAnger()
 {
 	clearTimeout(errorDiv.monkeyAngerTimer)
-	monkeyAngerLevel--
-	if(monkeyAngerLevel < 0) monkeyAngerLevel = 0
-	if(monkeyAngerLevel > furiousLevel) {
+	localSet('monkeyAngerLevel', localGet('monkeyAngerLevel') - 1)
+	if(localGet('monkeyAngerLevel') < 0) localSet('monkeyAngerLevel', 0)
+	if(localGet('monkeyAngerLevel') > furiousLevel)
+	{
 		displayMessage('Grrrrrrr...')
-		indicators.flash(4, 200)
 	}
-	if(monkeyAngerLevel == angryLevel && moneyMonkeyFurious == true)
+	if(localGet('monkeyAngerLevel') == angryLevel && localGet('moneyMonkeyFurious') == true)
 	{
 		displayMessage('Okay, I\'m better now.')
-		moneyMonkeyFurious = false
+		localSet('moneyMonkeyFurious', false)
+	}
+	if(localGet('moneyMonkeyFurious') == true)
+	{
+		indicators.flash(4, 200)
+	}
+	else
+	{
 		indicators.clear(4)
-	}
+	}
+	if(localGet('monkeyAngerLevel') > 0) errorDiv.monkeyAngerTimer = setTimeout(decreaseMonkeyAnger, monkeyAngerTimeout)
 }
 
 function displayError(error)
 {
-
 	unlockPage()
-	indicators.pulse(0, 3000)	increaseMonkeyAnger()
+	indicators.pulse(0, 3000)
+	increaseMonkeyAnger()
 	displayMessage(error)
 }
 
 function displayMessage(message)
 {
-clearTimeout(errorDiv.monkeyAngerTimer)
-	if(monkeyAngerLevel > 0) errorDiv.monkeyAngerTimer = setTimeout(decreaseMonkeyAnger, monkeyAngerTimeout)
+	clearTimeout(errorDiv.errorTimer)	
+
+	//Make sure a monkey anger message doesn't interfere with any messages
+	clearTimeout(errorDiv.monkeyAngerTimer)
+	if(localGet('monkeyAngerLevel') > 0) errorDiv.monkeyAngerTimer = setTimeout(decreaseMonkeyAnger, monkeyAngerTimeout)
+
 	clear_element(errorDiv)
 	errorDiv.style.display = ''
-	if(monkeyAngerLevel > furiousLevel)
+	if(localGet('monkeyAngerLevel') > furiousLevel)
 	{
 		//Furious monkey
 		errorDiv.appendChild(createElement( {elementType: 'div', className: 'errorMonkey furiousMonkey', text: '' } ))
 	}
 	else
 	{
-		if(monkeyAngerLevel > angryLevel)
+		if(localGet('monkeyAngerLevel') > angryLevel)
 		{
 			//Angry monkey
 			errorDiv.appendChild(createElement( {elementType: 'div', className: 'errorMonkey angryMonkey', text: '' } ))
@@ -608,7 +835,6 @@ clearTimeout(errorDiv.monkeyAngerTimer)
 		errorDiv.appendChild(createElement( {elementType: 'span', className: 'speechBubble', text: message} ))
 	}
 	errorDiv.style.transform = 'translateY(0%)'
-	clearTimeout(errorDiv.errorTimer)	
 	errorDiv.errorTimer = setTimeout(clearError, errorTimeout)
 }
 
@@ -636,6 +862,38 @@ function deleteBujdit(inputValue)
 	}
 }
 
+function deleteShnoppingList(inputValue)
+{
+	if(inputValue)
+	{
+		sendCommand({ cmd: 'shnopping_delete', id: inputValue }, checkModalFormSuccess)
+	}
+}
+
+function deletePayrol(inputValue)
+{
+	if(inputValue)
+	{
+//		sendCommand({ cmd: 'shnopping_delete', id: inputValue }, checkModalFormSuccess)
+	}
+}
+
+function deleteFrend(inputValue)
+{
+	if(inputValue)
+	{
+//		sendCommand({ cmd: 'shnopping_delete', id: inputValue }, checkModalFormSuccess)
+	}
+}
+
+function deleteMessgae(inputValue)
+{
+	if(inputValue)
+	{
+//		sendCommand({ cmd: 'shnopping_delete', id: inputValue }, checkModalFormSuccess)
+	}
+}
+
 function checkModalFormSuccess(data)
 {
 	if(data.success)
@@ -651,7 +909,7 @@ function checkModalFormSuccess(data)
 
 function gotoMainMenu()
 {
-	if(localStorage.getItem('session')) window.location.hash = ''
+	if(localGet('session')) window.location.hash = ''
 }
 
 function hslToRgb(h, s, l) {
@@ -693,35 +951,96 @@ function randRange(min, max) {
 	return Math.random() * (max - min) + min
 }
 
-function changeMonth(change)
+function forceCalednarYear(inputYear)
+{
+	let temp = getURLDate()
+	let tempDate = new Date()
+	tempDate.setMonth(temp[1])
+
+	let year = inputYear.toString()
+	let month = tempDate.getMonth().toString()
+
+	if(checkAgainstTodaysDate(year, month))
+	{
+		window.location.hash = 'calednarMenu'
+		return
+	}
+	//Since JS runs on a different month index than people, this value needs incremented
+	month++
+
+	window.location.hash = 'calednarMenu/' + year + ';' + month
+}
+
+function forceCalednarMonth(inputMonth)
+{
+	let temp = getURLDate()
+	let tempDate = new Date()
+	tempDate.setFullYear(temp[0])
+
+	let year = tempDate.getFullYear().toString()
+	let month = inputMonth.toString()
+
+	if(checkAgainstTodaysDate(year, month))
+	{
+		window.location.hash = 'calednarMenu'
+		return
+	}
+	//Since JS runs on a different month index than people, this value needs incremented
+	month++
+
+	window.location.hash = 'calednarMenu/' + year + ';' + month
+}
+
+function getURLDate()
 {
 	let temp = window.location.hash
 	let tempDate = new Date()
-	let tempYear = tempDate.getFullYear()
-	let tempMonth = tempDate.getMonth()
 	if(temp.search('/') !== -1)
 	{
 		temp = temp.split('/')
-		if(temp.length > 1) tempYear = parseFloat(temp[1])
-		if(temp.length > 2) tempMonth = parseFloat(temp[2]) + change
+		if(temp[1].length > 0)
+		{
+			temp = temp[1].split(';')
+			if(temp.length > 0) tempDate.setFullYear(parseFloat(temp[0]))
+			//Since JS runs on a different month index than people, this value needs decremented
+			if(temp.length > 1) tempDate.setMonth(parseFloat(temp[1]) - 1)
+		}
 	}
-	else
+	let tempYear = tempDate.getFullYear()
+	let tempMonth = tempDate.getMonth()
+
+	return [tempYear, tempMonth]
+}
+
+function setURLDate(monthChange)
+{
+	let temp = getURLDate()
+	let tempDate = new Date()
+	tempDate.setFullYear(temp[0])
+	tempDate.setMonth(temp[1] + monthChange)
+	
+	let year = tempDate.getFullYear()
+	let month = tempDate.getMonth()
+
+	if(checkAgainstTodaysDate(year, month))
 	{
-		tempMonth = tempMonth + change
+		window.location.hash = 'calednarMenu'
+		return
 	}
-	if(tempMonth < 0)
-	{
-		tempYear--
-		tempMonth = 11
-	}
-	if(tempMonth > 11)
-	{
-		tempYear++
-		tempMonth = 0
-	}
-	tempYear = tempYear.toString()
-	tempMonth = tempMonth.toString()
-	window.location.hash = 'calednarMenu/' + tempYear + '/' + tempMonth
+	//Since JS runs on a different month index than people, this value needs incremented
+	month++
+
+	year = year.toString()
+	month = month.toString()
+
+	window.location.hash = 'calednarMenu/' + year + ';' + month
+}
+
+function checkAgainstTodaysDate(year, month)
+{
+	let currentDate = new Date()
+	if(currentDate.getFullYear() == year && currentDate.getMonth() == month) return true
+	return false
 }
 
 function appendText(inputObject, textToAdd)
@@ -741,9 +1060,9 @@ function calculateEvents(inputYear)
 {
 
 	let events = {}
-	events.holidays = { color: '#4B4', dates: [] }
-	events.federalHolidays = { color: '#B44', dates: [] }
-	events.importantDays = { color: '#77F', dates: [] }
+	events.federalHolidays = { color: '#B44', description: 'Federal Holiday', dates: [] }
+	events.holidays = { color: '#4B4', description: 'Holiday', dates: [] }
+	events.importantDays = { color: '#77F', description: '', dates: [] }
 
 
 	//DAYS ARE GIVEN ON AN INDEX OF 1-7 INTO THESE FUNCTIONS
@@ -759,8 +1078,7 @@ function calculateEvents(inputYear)
 	events.federalHolidays.dates.push({ date: calculateRepeatDayOfMonth(inputYear, 9, 2, 1), name: "Labor Day" })
 	events.federalHolidays.dates.push({ date: calculateRepeatDayOfMonth(inputYear, 10, 2, 2), name: "Columbus Day" })
 	events.federalHolidays.dates.push({ date: calculateSetDay(inputYear, 11, 11), name: "Veteran's Day" })
-	let thanksgivingDay = calculateRepeatDayOfMonth(inputYear, 11, 5, 4)
-	events.federalHolidays.dates.push({ date: thanksgivingDay, name: "Thanksgiving Day" })
+	events.federalHolidays.dates.push({ date: calculateRepeatDayOfMonth(inputYear, 11, 5, 4), name: "Thanksgiving Day" })
 	events.federalHolidays.dates.push({ date: calculateSetDay(inputYear, 12, 25), name: "Christmas Day" })
 
 
@@ -769,6 +1087,7 @@ function calculateEvents(inputYear)
 	events.holidays.dates.push({ date: calculateRepeatDayOfMonth(inputYear, 5, 1, 2), name: "Mother's Day" })
 	events.holidays.dates.push({ date: calculateRepeatDayOfMonth(inputYear, 6, 1, 3), name: "Father's Day" })
 	events.holidays.dates.push({ date: calculateSetDay(inputYear, 10, 31), name: "Halloween" })
+	events.holidays.dates.push({ date: calculateSetDay(inputYear, 9, 11), name: "Patriot Day" })
 
 
 	//IMPORTANT DAYS (Non-holidays)
@@ -776,13 +1095,9 @@ function calculateEvents(inputYear)
 	events.importantDays.dates.push({ date: calculateRepeatDayOfMonth(inputYear, 3, 1, 2), name: "Daylight Savings Time Begins" })
 	events.importantDays.dates.push({ date: calculateRepeatDayOfMonth(inputYear, 11, 1, 1), name: "Daylight Savings Time Ends" })
 
-	let blackFriday = new Date(thanksgivingDay.getFullYear(), thanksgivingDay.getMonth(), thanksgivingDay.getDate())
-	blackFriday.setDate(blackFriday.getDate() + 1)
-	events.importantDays.dates.push({ date: blackFriday, name: "Black Friday" })
+	events.importantDays.dates.push({ date: calculateRepeatDayOfMonth(inputYear, 11, 5, 4, 1), name: "Black Friday" })
 
-	let cyberMonday = new Date(thanksgivingDay.getFullYear(), thanksgivingDay.getMonth(), thanksgivingDay.getDate())
-	cyberMonday.setDate(cyberMonday.getDate() + 4)
-	events.importantDays.dates.push({ date: cyberMonday, name: "Cyber Monday" })
+	events.importantDays.dates.push({ date: calculateRepeatDayOfMonth(inputYear, 11, 5, 4, 4), name: "Cyber Monday" })
 
 	
 	//Tax Day
@@ -835,7 +1150,7 @@ function calculateSetDay(inputYear, inputMonth, inputDay, skipWeekends = false)
 	return testDate
 }
 
-function calculateEaster(Y)
+function calculateEaster(Y, additional = 0)
 {
 	//Copied from Gavin Gilmour on StackOverflow
 	//https://stackoverflow.com/questions/1284314/easter-date-in-javascript
@@ -850,8 +1165,9 @@ function calculateEaster(Y)
 	let L = I - J;
 	let M = 3 + Math.floor((L + 40)/44);
 	let D = L + 28 - 31*Math.floor(M/4);
-
-	return createDate(Y, M, D)
+	let testDate = createDate(Y, M, D)
+	testDate.setDate(testDate.getDate() + additional)
+	return testDate
 }
 
 function createDate(year, month, day)
@@ -859,7 +1175,7 @@ function createDate(year, month, day)
 	return new Date(year, month - 1, day)
 }
 
-function calculateRepeatDayOfMonth(year, month, weekday, repeat)
+function calculateRepeatDayOfMonth(year, month, weekday, repeat, additional = 0)
 {
 	//Remember that weekday MUST be treated an index from 1-7 when being input into this function!!
 	//Also, the incoming month value is 1 greater than JS's date objects (Months are 0-11)
@@ -869,37 +1185,24 @@ function calculateRepeatDayOfMonth(year, month, weekday, repeat)
 	//Check to see if we accidentally crossed back into the current month.
 	if(testDate.getMonth() == month - 1) repeat--
 	testDate.setDate(testDate.getDate() + 7 * repeat)
-	return createDate(year, testDate.getMonth() + 1, testDate.getDate())
+	testDate = createDate(year, testDate.getMonth() + 1, testDate.getDate())
+	testDate.setDate(testDate.getDate() + additional)
+	return testDate
 }
 
-function calculateLastDayOfMonth(year, month, weekday)
+function calculateLastDayOfMonth(year, month, weekday, additional = 0)
 {
 	//Remember that weekday MUST be treated an index from 1-7 when being input into this function!!
 	//Also, the incoming month value is 1 greater than JS's date objects (Months are 0-11)
 	//In this instance, don't touch the month value during the declaration, as we are trying to get a month ahead
 	let testDate = new Date(year, month, 1)
 	testDate.setDate(testDate.getDate() - 1)
-	return createDate(year, testDate.getMonth() + 1, testDate.getDate() - (testDate.getDay() + 1) + weekday)
-}
-
-function changeYear(change)
-{
-	let temp = window.location.hash
-	let tempDate = new Date()
-	let tempYear = tempDate.getFullYear()
-	let tempMonth = tempDate.getMonth()
-	if(temp.search('/') !== -1)
+	testDate = createDate(year, testDate.getMonth() + 1, testDate.getDate() - (testDate.getDay() + 1) + weekday)
+	if(testDate.getMonth() == month)
 	{
-		temp = temp.split('/')
-		if(temp.length > 1) tempYear = parseFloat(temp[1]) + change
-		if(temp.length > 2) tempMonth = parseFloat(temp[2])
+		testDate.setDate(testDate.getDate() - 7)
 	}
-	else
-	{
-		tempYear = tempYear + change
-	}
-	tempYear = tempYear.toString()
-	tempMonth = tempMonth.toString()
-	window.location.hash = 'calednarMenu/' + tempYear + '/' + tempMonth
+	testDate.setDate(testDate.getDate() + additional)
+return testDate
 }
 

@@ -5,6 +5,8 @@
 }
 
 body {
+	text-size-adjust: none;
+
 	color: #FFFFFF;
 	background-color: #000;
 	font-family: 'Gochi Hand', monospace;
@@ -38,26 +40,16 @@ input {
 }
 
 button:hover {
-	background-color: rgba(255,255,128,.8);
+	background-color: #FF8C;
 }
 
 button {
-	font-family: 'Permanent Marker', monospace;
-	font-size: 42px;
 	font-weight: bold;
-	border-radius: 30px;
-	border-width: 2px;
-	border-color: #883;
-	width: 100%;
-	margin: 20px auto;
-	padding: 10px;
-	padding-bottom: 45px;
-	padding-top: 45px;
-	color: #000;
 	user-select: none;
 	text-shadow: 1px 1px #BBB, -1px -1px #BBB, -1px 1px #BBB, 1px -1px #BBB;
 	background-image: linear-gradient(0deg, rgba(0,0,0,0.05), rgba(255,255,255,0.1), rgba(0,0,0,0.05));
 	transition: background-color 0.1s;
+	font-family: inherit;
 }
 
 h1 {
@@ -146,8 +138,8 @@ select {
 	transition: background-color .15s;
 }
 
-.appbayPeopleButton {
-	background-image: linear-gradient(0deg, #0007, #0000, #0000, #0000, #0000, #0000, #FFF7), linear-gradient(90deg, #FFF7, #0000, #0000, #0000, #0000, #0000, #0007), url("/i/.png");
+.appbayBackButton {
+	background-image: linear-gradient(0deg, #0007, #0000, #0000, #0000, #0000, #0000, #FFF7), linear-gradient(90deg, #FFF7, #0000, #0000, #0000, #0000, #0000, #0007), url("/i/back.png");
 }
 
 .appbayMessgaesButton {
@@ -156,6 +148,18 @@ select {
 
 .appbayCalednarButton {
 	background-image: linear-gradient(0deg, #0007, #0000, #0000, #0000, #0000, #0000, #FFF7), linear-gradient(90deg, #FFF7, #0000, #0000, #0000, #0000, #0000, #0007), url("/i/calednar.png");
+}
+
+.loginModalButton:hover {
+	background-color: #0B0;
+	border-color: #9D9;
+}
+
+.loginModalButton {
+	width: 150px;
+	background-color: #090;
+	background-image: linear-gradient(0deg, #0007, #0000, #0000, #0000, #0000, #0000, #FFF7), linear-gradient(90deg, #FFF7, #0000, #0000, #0000, #0000, #0000, #0007);
+	user-select: none;
 }
 
 .logoutButton:hover {
@@ -230,7 +234,7 @@ select {
 	flex-direction: column;
 	overflow: auto;
 	align-items: stretch	;
-	background-image: url("/i/bgdoge85.png"), linear-gradient(120deg, rgba(0,0,0,0), rgba(0,0,0,0.6));
+	background-image: url("/i/bg/doge85.png"), linear-gradient(120deg, rgba(0,0,0,0), rgba(0,0,0,0.6));
 	background-size: 128pt, 100%;
 	background-color: #333;
 	transition: background-color 1.0s;
@@ -247,9 +251,15 @@ select {
 	color: #059;
 }
 
+.modalFlexContainer {
+	flex: 1 1 auto;
+	display: flex;
+	flex-direction: column;
+}
+
 .modalInput {
 	font-size: 28pt;
-	padding: 30px;
+	padding: 25px;
 	margin-top: 30px;
 	margin-bottom: 30px;
 }
@@ -302,6 +312,15 @@ select {
 	background-color: #555;
 }
 
+.okButton:hover {
+	background-color: #FFA;
+	border-color: #D99;
+}
+
+.okButton {
+	background-color: #5B5;
+}
+
 #mainButtonDiv {
 	flex: 0 0 auto;
 	display: flex;
@@ -331,6 +350,7 @@ select {
 	background-position: center;
 	margin-bottom: 16px;
 	cursor: pointer;
+	border: 1px solid #770;
 	text-shadow: 2px 2px #000, -2px -2px #000, -2px 2px #000, 2px -2px #000, 2px 0px #000, -2px 0px #000, 0px -2px #000, 0px 2px #000;
 	box-shadow: 10px 10px rgba(0, 0, 0, .2);
 	transform: translate(0px, 0px);
@@ -403,7 +423,7 @@ select {
 	background-image: linear-gradient(0deg, #0007, #0000, #0000, #0000, #0000, #0000, #FFF7), linear-gradient(90deg, #FFF7, #0000, #0000, #0000, #0000, #0000, #0007), url("/i/doler.png");
 }
 
-.reportsButton {
+.reprotsButton {
 	background-image: linear-gradient(0deg, #0007, #0000, #0000, #0000, #0000, #0000, #FFF7), linear-gradient(90deg, #FFF7, #0000, #0000, #0000, #0000, #0000, #0007), url("/i/cent.png");
 }
 
@@ -420,7 +440,7 @@ select {
 }
 
 .frendsButton {
-	background-image: linear-gradient(0deg, #0007, #0000, #0000, #0000, #0000, #0000, #FFF7), linear-gradient(90deg, #FFF7, #0000, #0000, #0000, #0000, #0000, #0007), url("/i/shnoppingCart.png");
+	background-image: linear-gradient(0deg, #0007, #0000, #0000, #0000, #0000, #0000, #FFF7), linear-gradient(90deg, #FFF7, #0000, #0000, #0000, #0000, #0000, #0007), url("/i/people.png");
 }
 
 .messgaesButton {
@@ -614,6 +634,20 @@ content: "Commit!";
 	padding: 30px;
 }
 
+.bigLoginButtons {
+	font-family: 'Permanent Marker', monospace;
+	font-size: 42px;
+	border-radius: 30px;
+	border-width: 2px;
+	border-color: #883;
+	width: 100%;
+	margin: 20px auto;
+	padding: 10px;
+	padding-bottom: 45px;
+	padding-top: 45px;
+	color: #000;
+}
+
 .inputLabel {
 	font-family: 'Permanent Marker', monospace;
 	font-size: 36pt;
@@ -651,7 +685,7 @@ content: "Commit!";
 }
 
 #errorDiv:hover {
-	opacity: 0.85;
+/*	opacity: 0.85;	*/
 }
 
 #errorDiv {
@@ -768,6 +802,25 @@ content: "Commit!";
 	grid-template-rows: 40px repeat(6, 1fr);
 }
 
+.calednarInput::before {
+	color: #0000;
+}
+ 
+.calednarInput::after {
+	color: #0000;
+}
+ 
+.calednarInput:hover {
+	color: #FF0;
+}
+ 
+.calednarInput {
+	background-color: #0000;
+	text-align: center;
+	border: none;
+	font-size: 48pt;
+}
+
 .calednarDateHeadings {
 	flex: 0 0 auto;
 	flex-direction: row;
@@ -777,16 +830,25 @@ content: "Commit!";
 	padding: 0px;
 }
 
+option {
+	color: #000;
+	background-color: #CCC;
+}
+
 .calednarYear {
-	width: 350px;
-	font-size: 48pt;
+	font-size: 42pt;
 	color: #FFF;
+	width: 180px;
 	text-shadow: 2px 2px #000, -2px -2px #000, -2px 2px #000, 2px -2px #000, 2px 0px #000, -2px 0px #000, 0px -2px #000, 0px 2px #000;
 }
 
 .calednarMonth {
-	width: 350px;
-	font-size: 36pt;
+	margin: 0px;
+	padding: 0px;
+	font-weight: normal;
+	font-family: inherit;
+	font-size: 42pt;
+	width: 375px;
 	color: #FFF;
 	text-shadow: 2px 2px #000, -2px -2px #000, -2px 2px #000, 2px -2px #000, 2px 0px #000, -2px 0px #000, 0px -2px #000, 0px 2px #000;
 }
@@ -799,9 +861,17 @@ content: "Commit!";
 	font-size: 48pt;
 	color: #FFF;
 	text-shadow: 2px 2px #000, -2px -2px #000, -2px 2px #000, 2px -2px #000, 2px 0px #000, -2px 0px #000, 0px -2px #000, 0px 2px #000;
-	margin-left: 40px;
-	margin-right: 40px;
+	margin-left: 20px;
+	margin-right: 20px;
 	user-select: none;
+}
+
+.calednarArrowSpacer {
+	width: 80px;
+}
+
+.calednarDay:hover {
+	filter: brightness(1.1);
 }
 
 .calednarDay {
@@ -811,15 +881,16 @@ content: "Commit!";
 	padding: 0px;
 	border: 2px solid #200;
 	color: #000;
-	background-color: #d3bb8a;
+	background-color: #BA8;
 	cursor: pointer;
 }
 
+.calednarOtherMonth:hover {
+	filter: brightness(0.6);
+}
+
 .calednarOtherMonth {
-	width: 100%;
-	min-height: 100%;
-	background-color: #000;
-	opacity: 0.5;
+	filter: brightness(0.5);
 }
 
 .calednarWeekdayLabel {
@@ -835,27 +906,23 @@ content: "Commit!";
 	overflow: hidden;
 }
 
-.calednarDayNumbers:hover {
-	color: #990;
-}
-
 .calednarDayNumbers {
 	font-size: 22pt;
 	font-weight: bold;
 	color: #000;
-	text-shadow: 2px 2px #000, -2px -2px #000, -2px 2px #000, 2px -2px #000, 2px 0px #000, -2px 0px #000, 0px -2px #000, 0px 2px #000;
 	text-shadow: 2px 2px #FFF, -2px -2px #FFF, -2px 2px #FFF, 2px -2px #FFF, 2px 0px #FFF, -2px 0px #FFF, 0px -2px #FFF, 0px 2px #FFF;
 	margin: 4px;
 }
 
 .calednarCurrentDay {
-	background-color: #8BF;
+	background-color: #8BE;
 }
 
 .calednarCellText {
 	text-overflow: ellipsis;
 	overflow: hidden;
 	padding: 4px;
+	text-align: center;
 }
 
 #modalroot {
@@ -916,9 +983,19 @@ content: "Commit!";
 	background-color: #900;
 }
 
+.loginModal {
+	background-color: #922E;
+	border: 7px solid #A44;
+}
+
 .bujditModal {
 	background-color: #6D6E;
 	border: 7px solid #4A4;
+}
+
+.shnoppingListModal {
+	background-color: #69DE;
+	border: 7px solid #47B;
 }
 
 .acountModal {
@@ -946,9 +1023,9 @@ content: "Commit!";
 	border: 7px solid #AAA;
 }
 
-.newShnoppingListModal {
-	background-color: #69DE;
-	border: 7px solid #47B;
+.setingsModal {
+	background-color: #333E;
+	border: 7px solid #555;
 }
 
 .menuButtonWrapper {
@@ -1003,3 +1080,103 @@ content: "Commit!";
 	background-color: rgba(110,0,0,1);
 }
 
+.shnoppingListTopRow {
+	height: 74px;
+	padding: 10px;
+	display: flex;
+	flex-direction: row;
+	width: 1000px;
+	align-items: center;
+}
+
+.addEntryButton:hover {
+	background-color: #AA0;
+	transform: translate(3px, 3px);
+	box-shadow: 5px 5px rgba(0, 0, 0, .2);
+	border: 1px solid #FF0;
+}
+
+.addEntryButton {
+	padding: 15px;
+	padding-top: 12px;
+	padding-bottom: 12px;
+	margin: 10px;
+	font-size: 28pt;
+	border-radius: 10px;
+	border: 1px solid #770;
+	background-image: linear-gradient(0deg, #0007, #0000, #0000, #0000, #0000, #0000, #FFF7), linear-gradient(90deg, #FFF7, #0000, #0000, #0000, #0000, #0000, #0007);
+	text-shadow: 2px 2px #000, -2px -2px #000, -2px 2px #000, 2px -2px #000, 2px 0px #000, -2px 0px #000, 0px -2px #000, 0px 2px #000;
+	box-shadow: 10px 10px rgba(0, 0, 0, .2);
+	transform: translate(0px, 0px);
+	transition: color 0.25s, box-shadow 0.25s, transform 0.25s;
+	user-select: none;
+}
+
+#storeSelection {
+	padding: 20px;
+	padding-left: 10px;
+	padding-right: 10px;
+	margin: 0px;
+	font-size: 16pt;
+	width: 350px;
+}
+
+#optionSelection {
+	padding: 20px;
+	padding-left: 10px;
+	padding-right: 10px;
+	margin: 0px;
+	font-size: 16pt;
+	width: 200px;
+}
+
+.shnoppingListFrame {
+	display: grid;
+	grid-template-columns: 200px 500px 180px 120px;
+}
+
+.shnoppingListEntry {
+	text-align: center;
+	background-color: #009;
+}
+
+.shnoppingListItem {
+	padding: 10px;
+	font-size: 22pt;
+}
+
+.shnoppingListHeader {
+	color: #FFF;
+	font-weight: bold;
+	font-size: 26pt;
+	background-color: #000;
+	user-select: none;
+}
+
+.shnoppingListHeaderText {
+	cursor: pointer;
+}
+
+.shnoppingListItemOnList {
+	background-color: #009;
+}
+
+.shnoppingListItemInCart {
+	background-color: #004;
+}
+
+.shnoppingListItemPurchased {
+	background-color: #000;
+}
+
+.shnoppingListEntrystore {
+}
+
+.shnoppingListEntryname {
+}
+
+.shnoppingListEntryquantity {
+}
+
+.shnoppingListEntrystatus {
+}
